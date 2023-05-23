@@ -11,7 +11,7 @@ use open20\agid\organizationalunit\models\AgidOrganizationalOrganizationalUnitMm
 use open20\amos\attachments\behaviors\FileBehavior;
 use open20\amos\documenti\models\Documenti;
 use open20\agid\organizationalunit\models\AgidOrganizationalUnit as AgidOrganizationalUnitModel;
-
+use open20\agid\organizationalunit\models\AgidOrganizationalUnitProfileType;
 use open20\agid\service\models\AgidService;
 
 /**
@@ -87,6 +87,14 @@ abstract class AgidOrganizationalUnit extends \open20\amos\core\record\ContentMo
             ['logo_image', /*'maxFiles' => 1,*/ 'file', 'extensions' => 'jpeg, jpg, png, gif'],
             [['mail_reference', 'pec_reference'], 'email'],
             [['website_url'], 'url', 'defaultScheme' => 'https'],
+
+            [['agid_organizational_unit_profile_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => AgidOrganizationalUnitProfileType::className(), 'targetAttribute' => ['agid_organizational_unit_profile_type_id' => 'id']],
+            [['id_organizational_unit', 'telephone_internal_use', 'email_internal_use', 'fax'], 'string', 'max' => 255],
+            [['email_internal_use'], 'email'],
+            [['priorita', 'agid_organizational_unit_profile_type_id'], 'integer'],
+            [['priorita'], 'match' ,'pattern'=> '/^[0-9]+$/u'],
+            [['agid_organizational_unit_profile_type_id'], 'required'],
+            [['notes_internal_use'], 'string']
         ];
     }
 
@@ -97,6 +105,13 @@ abstract class AgidOrganizationalUnit extends \open20\amos\core\record\ContentMo
     {
         return ArrayHelper::merge(parent::attributeLabels(), [
             'id' => Module::t('amosorganizationalunit', 'ID'),
+            'agid_organizational_unit_profile_type_id' => Module::t('amosorganizationalunit', 'Tipologia di profilo'),
+            'id_organizational_unit' => Module::t('amosorganizationalunit', 'ID Unità Organizzativa'),
+            'priorita' => Module::t('amosorganizationalunit', 'Priorità'),
+            'notes_internal_use' => Module::t('amosorganizationalunit', 'Note (a uso interno)'),
+            'email_internal_use' => Module::t('amosorganizationalunit', 'Indirizzo email (a uso interno)'),
+            'telephone_internal_use' => Module::t('amosorganizationalunit', 'Riferimento telefonico (a uso interno)'),
+            'fax' => Module::t('amosorganizationalunit', 'Fax'),
             'agid_organizational_unit_content_type_id' => Module::t('amosorganizationalunit', 'agid_organizational_unit_content_type_id'),
             'agid_organizational_unit_type_id' => Module::t('amosorganizationalunit', 'agid_organizational_unit_type_id'),
             'agid_person_president_id' => Module::t('amosorganizationalunit', 'agid_person_president_id'),
@@ -372,5 +387,78 @@ abstract class AgidOrganizationalUnit extends \open20\amos\core\record\ContentMo
         return $agid_organizational_unit = $agid_organizational_unit->andWhere([ 'deleted_at' => null ])->all();
 
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAgidOrganizationalUnitProfileType()
+    {
+        return $this->hasOne(\open20\agid\organizationalunit\models\AgidOrganizationalUnitProfileType::className(), ['id' => 'agid_organizational_unit_profile_type_id']);
+    }
+
+
+    /**
+     * Method to get all AgidOrganizationalUnit father
+     * where agid_organizational_organizational_unit_mm.agid_organizational_unit_id = $this->id
+     *
+     * @param string | AGID_ORGANIZATIONAL_UNIT_WORKFLOW | $status
+     * @return array | open20\agid\organizationalunit\models\AgidOrganizationalUnit | $agid_organizational_unit
+     */
+    public function getAgidOrganizationalOrganizationalUnitMmFather($status = null){
+
+        $agid_organizational_unit = \open20\agid\organizationalunit\models\AgidOrganizationalUnit::find()
+                                        ->andWhere(['id' => AgidOrganizationalOrganizationalUnitMm::find()
+                                                                ->select('agid_organizational_unit_father_id as id')
+                                                                ->andWhere(['agid_organizational_unit_id' => $this->id])
+                                                                ->andWhere(['deleted_at' => null])
+                                                            ])
+                                        ->andWhere(['deleted_at' => null])
+                                        ->orderBy(['priorita' => SORT_ASC]);
+
+        if( $status ){
+
+            $agid_organizational_unit->andWhere(['status' => $status]);
+
+        }else{
+
+            $agid_organizational_unit->andWhere(['status' => ($status ? $status : AgidOrganizationalUnitModel::AGID_ORGANIZATIONAL_UNIT_WORKFLOW_STATUS_VALIDATED)]);
+        }
+
+        return $agid_organizational_unit->all();   
+        
+        return $agid_organizational_unit;
+    }
+
+    
+    /**
+     * Method to get all AgidOrganizationalUnit children
+     * where agid_organizational_organizational_unit_mm.agid_organizational_unit_father_id = $this->id
+     *
+     * @param string | array | AGID_ORGANIZATIONAL_UNIT_WORKFLOW | $status
+     * @return array | open20\agid\organizationalunit\models\AgidOrganizationalUnit | $agid_organizational_unit
+     */
+    public function getAgidOrganizationalOrganizationalUnitMmChildren($status = null){
+
+        $agid_organizational_unit = \open20\agid\organizationalunit\models\AgidOrganizationalUnit::find()
+                                        ->andWhere(['id' => AgidOrganizationalOrganizationalUnitMm::find()
+                                                                ->select('agid_organizational_unit_id as id')
+                                                                ->andWhere(['agid_organizational_unit_father_id' => $this->id])
+                                                                ->andWhere(['deleted_at' => null])
+                                                            ])
+                                        ->andWhere(['deleted_at' => null])
+                                        ->orderBy(['priorita' => SORT_ASC]);
+
+        if( $status ){
+
+            $agid_organizational_unit->andWhere(['status' => $status]);
+
+        }else{
+
+            $agid_organizational_unit->andWhere(['status' => ($status ? $status : AgidOrganizationalUnitModel::AGID_ORGANIZATIONAL_UNIT_WORKFLOW_STATUS_VALIDATED)]);
+        }
+
+        return $agid_organizational_unit->all();        
+    }
+   
 
 }

@@ -17,13 +17,11 @@ use open20\amos\admin\models\base\UserProfile;
  */
 class AgidOrganizationalUnit extends BaseAgidOrganizationalUnit
 {
-
     // Workflow ID
-    const AGID_ORGANIZATIONAL_UNIT_WORKFLOW = 'AgidOrganizationalUnitWorkflow';
+    const AGID_ORGANIZATIONAL_UNIT_WORKFLOW                  = 'AgidOrganizationalUnitWorkflow';
     // Workflow states IDS
-    const AGID_ORGANIZATIONAL_UNIT_WORKFLOW_STATUS_DRAFT = "AgidOrganizationalUnitWorkflow/DRAFT";
-	const AGID_ORGANIZATIONAL_UNIT_WORKFLOW_STATUS_VALIDATED = "AgidOrganizationalUnitWorkflow/VALIDATED";
-	
+    const AGID_ORGANIZATIONAL_UNIT_WORKFLOW_STATUS_DRAFT     = "AgidOrganizationalUnitWorkflow/DRAFT";
+    const AGID_ORGANIZATIONAL_UNIT_WORKFLOW_STATUS_VALIDATED = "AgidOrganizationalUnitWorkflow/VALIDATED";
 
     /**
      * @inheritdoc
@@ -35,37 +33,36 @@ class AgidOrganizationalUnit extends BaseAgidOrganizationalUnit
         if ($this->isNewRecord) {
             $this->status = $this->getWorkflowSource()->getWorkflow(self:: AGID_ORGANIZATIONAL_UNIT_WORKFLOW)->getInitialStatusId();
         }
-	}
-	
+    }
 
-	/**
+    /**
      * @inheritdoc
      */
     public function behaviors()
     {
-        return ArrayHelper::merge(parent::behaviors(), [
-			'workflow' => [
-				'class' => SimpleWorkflowBehavior::className(),
-				'defaultWorkflowId' => self:: AGID_ORGANIZATIONAL_UNIT_WORKFLOW,
-				'propagateErrorsToModel' => true,
-			],
-			'workflowLog' => [
-				'class' => WorkflowLogFunctionsBehavior::className(),
-            ],
-            'fileBehavior' => [
-                'class' => FileBehavior::className(),
-            ],
-            'SeoContentBehavior' => [
-                'class' => SeoContentBehavior::className(),
-                'imageAttribute' => null,
-                'titleAttribute' => 'name',
-                'descriptionAttribute' => 'short_description',
-                'defaultOgType' => 'organization',
-                'schema' => 'Organization'
-            ]
+        return ArrayHelper::merge(parent::behaviors(),
+                [
+                'workflow' => [
+                    'class' => SimpleWorkflowBehavior::className(),
+                    'defaultWorkflowId' => self:: AGID_ORGANIZATIONAL_UNIT_WORKFLOW,
+                    'propagateErrorsToModel' => true,
+                ],
+                'workflowLog' => [
+                    'class' => WorkflowLogFunctionsBehavior::className(),
+                ],
+                'fileBehavior' => [
+                    'class' => FileBehavior::className(),
+                ],
+                'SeoContentBehavior' => [
+                    'class' => SeoContentBehavior::className(),
+                    'imageAttribute' => null,
+                    'titleAttribute' => 'name',
+                    'descriptionAttribute' => 'short_description',
+                    'defaultOgType' => 'organization',
+                    'schema' => 'Organization'
+                ]
         ]);
     }
-    
 
     public function representingColumn()
     {
@@ -80,11 +77,11 @@ class AgidOrganizationalUnit extends BaseAgidOrganizationalUnit
         return [];
     }
 
-	/**
-	 * Returns the text hint for the specified attribute.
-	 * @param string $attribute the attribute name
-	 * @return string the attribute hint
-	 */
+    /**
+     * Returns the text hint for the specified attribute.
+     * @param string $attribute the attribute name
+     * @return string the attribute hint
+     */
     public function getAttributeHint($attribute)
     {
         $hints = $this->attributeHints();
@@ -194,89 +191,88 @@ class AgidOrganizationalUnit extends BaseAgidOrganizationalUnit
         ];
     }
 
-	/**
-	 * @return string marker path
-	 */
+    /**
+     * @return string marker path
+     */
     public function getIconMarker()
     {
         return null; //TODO
     }
 
-	/**
-	 * If events are more than one, set 'array' => true in the calendarView in the index.
-	 * @return array events
-	 */
+    /**
+     * If events are more than one, set 'array' => true in the calendarView in the index.
+     * @return array events
+     */
     public function getEvents()
     {
         return null; //TODO
     }
 
-	/**
-	 * @return url event (calendar of activities)
-	 */
+    /**
+     * @return url event (calendar of activities)
+     */
     public function getUrlEvent()
     {
         return null; //TODO e.g. Yii::$app->urlManager->createUrl([]);
     }
 
-	/**
-	 * @return color event
-	 */
+    /**
+     * @return color event
+     */
     public function getColorEvent()
     {
         return null; //TODO
     }
 
-	/**
-	 * @return title event
-	 */
+    /**
+     * @return title event
+     */
     public function getTitleEvent()
     {
         return null; //TODO
     }
-    
+
     /**
      * @return AgidOrganizationalUnitGrammar|mixed
      */
     public function getGrammar()
     {
-        
+
         return new AgidOrganizationalUnitGrammar();
-        
     }
-    
+
     /**
      *
      * @return type
      */
     public function getSchema()
     {
-        $publisher      = new \simialbi\yii2\schemaorg\models\Organization();
-        $publisher->name    = $this->nameSurname;
+        $publisher       = new \simialbi\yii2\schemaorg\models\Organization();
+        $publisher->name = $this->nameSurname;
         \simialbi\yii2\schemaorg\helpers\JsonLDHelper::add($author);
         return \simialbi\yii2\schemaorg\helpers\JsonLDHelper::render();
     }
 
-    
     /**
      * Method to set AgidOrganizationalUnitServiceMm
      *
      * @return void
      */
-    public function createAgidOrganizationalUnitServicesMm(){
+    public function createAgidOrganizationalUnitServicesMm()
+    {
 
         $post_request = \Yii::$app->request->post();
 
-        if( isset($post_request['AgidOrganizationalUnit']['agid_organizational_unit_service_mm']) ){
+        if (isset($post_request['AgidOrganizationalUnit']['agid_organizational_unit_service_mm'])) {
 
             foreach ($post_request['AgidOrganizationalUnit']['agid_organizational_unit_service_mm'] as $key => $value) {
-                
+
                 // $this->deleteAgidOrganizationalUnitServiceMm();
 
                 $agid_organizational_unit_service_mm = new AgidOrganizationalUnitServiceMm;
 
                 $agid_organizational_unit_service_mm->agid_organizational_unit_id = $this->id;
-                $agid_organizational_unit_service_mm->agid_service_id = $value;
+                $agid_organizational_unit_service_mm->agid_service_id             = $value;
 
                 $agid_organizational_unit_service_mm->save();
             }
@@ -288,7 +284,8 @@ class AgidOrganizationalUnit extends BaseAgidOrganizationalUnit
      *
      * @return void
      */
-    public function updateAgidOrganizationalUnitServiceMm(){
+    public function updateAgidOrganizationalUnitServiceMm()
+    {
 
         $this->deleteAgidOrganizationalUnitServiceMm();
 
@@ -300,7 +297,8 @@ class AgidOrganizationalUnit extends BaseAgidOrganizationalUnit
      *
      * @return void
      */
-    protected function deleteAgidOrganizationalUnitServiceMm(){
+    protected function deleteAgidOrganizationalUnitServiceMm()
+    {
 
         // delete all AgidOrganizationalUnitServiceMm
         foreach ($this->agidOrganizationalUnitServicesMm as $key => $agid_organizational_unit_service_mm) {
@@ -315,8 +313,32 @@ class AgidOrganizationalUnit extends BaseAgidOrganizationalUnit
      * @param int $id
      * @return void
      */
-    public function getUserProfileByUserId($id = null){
+    public function getUserProfileByUserId($id = null)
+    {
 
         return UserProfile::find()->andWhere(['user_id' => $id])->one();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValidatedStatus()
+    {
+        return self::AGID_ORGANIZATIONAL_UNIT_WORKFLOW_STATUS_VALIDATED;
+    }
+
+    public function getChildren()
+    {
+        return $this->hasMany(AgidOrganizationalOrganizationalUnitMm::className(),
+                ['agid_organizational_unit_father_id' => 'id']);
+    }
+
+    public function getValidatedChildren()
+    {
+        $ids = AgidOrganizationalOrganizationalUnitMm::find()->andWhere(['agid_organizational_unit_father_id' => $this->id])->select('agid_organizational_unit_id as id');
+        $ret = self::find()->andWhere([self::tableName().'.status' => self::AGID_ORGANIZATIONAL_UNIT_WORKFLOW_STATUS_VALIDATED])
+            ->andWhere(['in', 'id', $ids])
+           ->orderBy(new \yii\db\Expression("CONVERT(COALESCE(agid_organizational_unit.priorita, '9999999999'),UNSIGNED)  ASC, agid_organizational_unit.name asc"));
+        return $ret;
     }
 }

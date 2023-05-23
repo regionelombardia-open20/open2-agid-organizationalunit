@@ -29,6 +29,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 use open20\agid\service\models\AgidService;
+use open20\agid\organizationalunit\models\AgidOrganizationalUnitProfileType;
 
 /**
  * @var View $this
@@ -57,9 +58,6 @@ JS;
 $this->registerJs($script);
 ?>
 
-
-
-
 <div class="agid-organizational-unit-form ">
 	<?php 
 		$form = ActiveForm::begin([
@@ -73,8 +71,46 @@ $this->registerJs($script);
 		]);
 	?>
 
-
 	<div class="row">
+
+		<!--nome-->
+		<div class="col-xs-12 section-form">
+			<h2 class="subtitle-form">Profilo</h2>
+			<div class="row">
+				<div class="col-md-6">
+					<?= 
+						$form->field($model, 'agid_organizational_unit_profile_type_id')->widget(Select::className(), [
+							'data' => ArrayHelper::map(AgidOrganizationalUnitProfileType::find()->orderBy('name')->all(), 'id', 'name'),
+							'language' => substr(Yii::$app->language, 0, 2),
+							'options' => [
+								'id' => 'agid_organizational_unit_profile_type_id',
+								'multiple' => false,
+								'placeholder' => Module::t('amosorganizationalunit', '#select_choose') . '...'
+							]
+						]); 
+					?>
+				</div>
+				<div class="col-md-6">
+					<!-- ?? VALORE -->
+					<?=
+						$form->field($model, 'id_organizational_unit')->textInput([
+							'maxlength' => true, 
+							'readonly'=> true,
+							'value' => $model->id
+						])
+					?>
+				</div>
+				<div class="col-md-6">
+					<!-- ?? VALORE -->
+					<?= 
+						$form->field($model, 'priorita')->textInput([
+							'type' => 'number',
+						]) 
+					?>
+				</div>
+			</div>
+		</div>
+
 		<!--nome-->
 		<div class="col-xs-12 section-form">
 			<h2 class="subtitle-form">Nome</h2>
@@ -87,7 +123,6 @@ $this->registerJs($script);
 					?>
 				</div>
 			</div>
-			
 		</div>
 
 		<!--tipologia-->
@@ -308,6 +343,47 @@ $this->registerJs($script);
 				</div>
 			</div>
 		</div>
+
+		<div class="col-xs-12 section-form">
+			<h2 class="subtitle-form">Rubrica interna</h2>
+			<div class="row">
+				<div class="col-md-6 col-xs-12">
+					<?=
+						$form->field($model, 'fax')->textInput([
+							'maxlength' => '255',
+							'placeholder' => Module::t('amosorganizationalunit', 'Fax'),
+						])
+					?>
+				</div>
+				<div class="col-md-6 col-xs-12">
+					<?=
+						$form->field($model, 'telephone_internal_use')->textInput([
+							'maxlength' => '255',
+							'placeholder' => Module::t('amosorganizationalunit', 'Riferimento telefonico (a uso interno)'),
+						])
+					?>
+				</div>
+				<div class="col-md-6 col-xs-12">
+					<?=
+						$form->field($model, 'email_internal_use')->textInput([
+							'maxlength' => '255',
+							'placeholder' => Module::t('amosorganizationalunit', 'Indirizzo email (a uso interno)'),
+						])
+					?>
+				</div>
+				<div class="col-md-6 col-xs-12">
+					<?=
+						$form->field($model, 'notes_internal_use')->widget(TextEditorWidget::className(), [
+							'clientOptions' => [
+								'id' => 'help_box',
+								'lang' => substr(Yii::$app->language, 0, 2),
+							],
+						]);
+					?>
+				</div>
+			</div>
+		</div>
+
 
 		<div class="col-xs-12 section-form">
 			<div class="row">
