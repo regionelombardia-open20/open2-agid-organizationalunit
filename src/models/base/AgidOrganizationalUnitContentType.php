@@ -11,6 +11,7 @@ use open20\agid\organizationalunit\models\AgidOrganizationalUnitContentTypeRoles
  * @property integer $id
  * @property string $name
  * @property string $description
+ * @property string $content_type_icon
  * @property string $created_at
  * @property string $updated_at
  * @property string $deleted_at
@@ -39,7 +40,7 @@ class AgidOrganizationalUnitContentType extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['created_by', 'updated_by', 'deleted_by'], 'integer'],
-            [['name'], 'string', 'max' => 255],
+            [['name', 'content_type_icon'], 'string', 'max' => 255],
         ];
     }
 
@@ -52,6 +53,7 @@ class AgidOrganizationalUnitContentType extends \yii\db\ActiveRecord
             'id' => Yii::t('amosorganizationalunit', 'ID'),
             'name' => Yii::t('amosorganizationalunit', 'Name'),
             'description' => Yii::t('amosorganizationalunit', 'Description'),
+            'content_type_icon' => Yii::t('amosorganizationalunit', 'Icon'),
             'created_at' => Yii::t('amosorganizationalunit', 'Created at'),
             'updated_at' => Yii::t('amosorganizationalunit', 'Updated at'),
             'deleted_at' => Yii::t('amosorganizationalunit', 'Deleted at'),

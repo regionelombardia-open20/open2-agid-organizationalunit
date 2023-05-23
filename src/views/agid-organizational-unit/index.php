@@ -23,6 +23,142 @@ use yii\data\ActiveDataProvider;
 $this->title = Module::t('amosorganizationalunit', 'Organizational Unit');
 $this->params['breadcrumbs'][] = ['label' => '', 'url' => ['/app']];
 $this->params['breadcrumbs'][] = $this->title;
+$exportColumns=[
+    'id' => [
+        'attribute' => 'id',
+        'value' => 'id',
+        'label' => '#ID'
+    ],
+    'name' => [
+        'attribute' => 'name',
+        'value' => 'name',
+        'label' => Module::t('amosorganizationalunit','#name')
+    ],
+
+    'agidOrganizationalUnitContentType' => [
+        'attribute' => 'agidOrganizationalUnitContentType.name',
+        'value' => function ($model) {
+            return $model->agidOrganizationalUnitContentType->name;
+        },
+        'label' => Module::t('amosorganizationalunit','agid_organizational_unit_content_type_id'),
+    ],
+
+    'agidOrganizationalUnitType' => [
+        'attribute' => 'agidOrganizationalUnitType.name',
+        'format' => 'html',
+        'label' => Module::t('amosorganizationalunit','agid_organizational_unit_type_id'),
+        'value' => function ($model) {
+            return $model->agidOrganizationalUnitType->name;
+        },
+    ],
+    'short_description' => [
+        'attribute' => 'short_description',
+        'format' => 'html',
+        'label' => Module::t('amosorganizationalunit','Decrizione breve'),
+        'value' => function ($model) {
+            return $model->short_description;
+        },
+    ],
+    'skills' => [
+        'attribute' => 'skills',
+        'format' => 'html',
+        'label' => Module::t('amosorganizationalunit','Competenze'),
+        'value' => function ($model) {
+            return strip_tags($model->skills);
+        },
+    ],
+    'headquarters_name' => [
+        'attribute' => 'headquarters_name',
+        'format' => 'html',
+        'label' => Module::t('amosorganizationalunit','Sede principale'),
+        'value' => function ($model) {
+            return $model->headquarters_name;
+        },
+    ],
+    'address' => [
+        'attribute' => 'address',
+        'format' => 'html',
+        'label' => Module::t('amosorganizationalunit','Indirizzo'),
+        'value' => function ($model) {
+            return $model->address;
+        },
+    ],
+    'telephone_reference' => [
+        'attribute' => 'telephone_reference',
+        'format' => 'html',
+        'label' => Module::t('amosorganizationalunit','Riferimento Telefonico'),
+        'value' => function ($model) {
+            return $model->telephone_reference;
+        },
+    ],
+	    'mail_reference' => [
+        'attribute' => 'mail_reference',
+        'format' => 'html',
+        'label' => Module::t('amosorganizationalunit','Riferimento Mail'),
+        'value' => function ($model) {
+            return $model->mail_reference;
+        },
+    ],
+	'pec_reference' => [
+        'attribute' => 'pec_reference',
+        'format' => 'html',
+        'label' => Module::t('amosorganizationalunit','Riferimento PEC'),
+        'value' => function ($model) {
+            return $model->pec_reference;
+        },
+    ],
+
+    'created_by' => [
+        'attribute' => 'created_by',
+        'label' => Module::t('amosorganizationalunit', 'Creato da'),
+        'value' => function ($model) {
+            if( $user_profile = \open20\amos\admin\models\UserProfile::find()->andWhere(['user_id' => $model->created_by])->one() ){
+                return $user_profile->nome . " " . $user_profile->cognome;
+            }
+            return;
+        },],
+    'created_at' => [
+        'label' => Module::t('amosorganizationalunit', 'Creato il'),
+        'attribute' => 'created_at',
+        'format' => ['date', 'php:d/m/Y H:i:s'],
+    ],
+    'updated_by' => [
+        'attribute' => 'created_by',
+        'label' => Module::t('amosorganizationalunit', 'Aggiornato da'),
+        'value' => function ($model) {
+            if( $user_profile = \open20\amos\admin\models\UserProfile::find()->andWhere(['user_id' => $model->updated_by])->one() ){
+                return $user_profile->nome . " " . $user_profile->cognome;
+            }
+            return;
+        },],
+    'updated_at' => [
+        'label' => Module::t('amosorganizationalunit', 'Aggiornato il'),
+        'attribute' => 'updated_at',
+        'format' => ['date', 'php:d/m/Y H:i:s'],
+    ],
+    'status' => [
+        'label' => Module::t('amosorganizationalunit', 'Stato'),
+        'value' => function ($model) {
+            return Module::t('amosorganizationalunit', $model->status);
+        },
+        'attribute' => 'status'
+    ],
+    'tag'=> [
+        'label' => Module::t('amosorganizationalunit', 'Tags'),
+        'value' => function ($model) {
+            $goals='';
+            $entityTags = open20\amos\tag\models\EntitysTagsMm::find()
+                ->andWhere(['record_id' => $model->id])
+                ->andWhere(['classname' => $model->className()])->all();
+            foreach ($entityTags as $tag) {
+                $tagn=open20\amos\tag\models\Tag::find()
+                    ->andWhere(['id' => $tag->tag_id,'root' => $tag->root_id
+                    ])->one();
+                $goals .= $tagn->nome .',';
+            }
+            return rtrim($goals, ", ");
+        },
+    ]];
 
 ?>
 
@@ -91,7 +227,8 @@ $this->params['breadcrumbs'][] = $this->title;
 					'status' => [
 						'attribute' => 'status',
 						'value' => function ($model) {
-							return WorkflowTransitionWidgetUtility::getLabelStatus($model);
+							// return WorkflowTransitionWidgetUtility::getLabelStatus($model);
+							return Module::t('amosorganizationalunit', $model->status);
 						},
 						'label' => Module::t('amosorganizationalunit','status')
 					],
@@ -142,7 +279,12 @@ $this->params['breadcrumbs'][] = $this->title;
 						]
 					],
 				],
-			],
+                'enableExport' => true,
+            ],
+            'exportConfig' => [
+                'exportEnabled' => true,
+                'exportColumns' => $exportColumns
+            ],
 		]);
 	?>
 </div>

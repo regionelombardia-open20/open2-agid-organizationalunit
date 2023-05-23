@@ -61,5 +61,7 @@ return [
     '#Search by pec_reference' => 'Cerca per Riferimento PEC',
     '#updated_from' => 'Aggiornato dal',
     '#updated_to' => 'Aggiornato al',
+    "AgidOrganizationalUnitWorkflow/DRAFT" => "BOZZA",
+    "AgidOrganizationalUnitWorkflow/VALIDATED" => "PUBBLICATO"
 
 ];

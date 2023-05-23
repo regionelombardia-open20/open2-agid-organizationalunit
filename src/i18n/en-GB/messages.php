@@ -44,4 +44,6 @@ return [
     '#select_choose' => 'Select',
     '#article_singular' => 'the',
     '#person' => 'person', 
+    "AgidOrganizationalUnitWorkflow/DRAFT" => "DRAFT",
+    "AgidOrganizationalUnitWorkflow/VALIDATED" => "PUBLISHED"
 ];
