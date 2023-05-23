@@ -10,9 +10,9 @@ use yii\helpers\ArrayHelper;
  */
 class AgidOrganizationalUnitProfileType extends \open20\agid\organizationalunit\models\base\AgidOrganizationalUnitProfileType
 {
-    public static function getEditFields()
+    public function getEditFields()
     {
-        $labels = self::attributeLabels();
+        $labels = $this->attributeLabels();
 
         return [
             [

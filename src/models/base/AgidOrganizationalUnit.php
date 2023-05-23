@@ -264,7 +264,7 @@ abstract class AgidOrganizationalUnit extends \open20\amos\core\record\ContentMo
         return ArrayHelper::map(
                 ArrayHelper::getColumn(
                     (new \yii\db\Query())->from('sw_status')
-                    ->where(['workflow_id' => $this::AGID_ORGANIZATIONAL_UNIT_WORKFLOW])
+                    ->where(['workflow_id' => AgidOrganizationalUnitModel::AGID_ORGANIZATIONAL_UNIT_WORKFLOW])
                     ->orderBy(['sort_order' => SORT_ASC])
                     ->all(),
 
@@ -455,6 +455,10 @@ abstract class AgidOrganizationalUnit extends \open20\amos\core\record\ContentMo
         }else{
 
             $agid_organizational_unit->andWhere(['status' => ($status ? $status : AgidOrganizationalUnitModel::AGID_ORGANIZATIONAL_UNIT_WORKFLOW_STATUS_VALIDATED)]);
+        }
+        
+        if(\Yii::$app->user->isGuest || !(\Yii::$app->user->can('RUBRICA_INTERNA') || \Yii::$app->user->can('ADMIN'))){
+            $agid_organizational_unit->andWhere(['agid_organizational_unit_profile_type_id' => 1]);
         }
 
         return $agid_organizational_unit->all();        

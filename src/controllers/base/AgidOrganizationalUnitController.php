@@ -144,6 +144,10 @@ class AgidOrganizationalUnitController extends CrudController
                 
                 // create AgidOrganizationalUnit
                 if( $this->model->save() ){
+                    if(empty($this->model->id_organizational_unit)){
+                        $this->model->id_organizational_unit = $this->model->id;
+                        $this->model->save(false);
+                    }
 
                     $post_request = Yii::$app->request->post();
 

@@ -65,17 +65,17 @@ class AgidOrganizationalUnitSearch extends AgidOrganizationalUnit implements Sea
      * @param type $params
      * @return \open20\agid\organizationalunit\models\search\ActiveDataProvider
      */
-    public function search($params, $queryType = NULL, $limit = NULL, $onlyDrafts = false, $pageSize = NULL)
+    public function search($params, $queryType = null, $limit = null, $onlyDrafts = false, $pageSize = NULL)
     {
 
         $query = AgidOrganizationalUnit::find();
         //ricerca soloo per contenuti che posso vedere AGID
 
-        if (\Yii::$app->getUser()->can('REDACTOR_ORGANIZATIONALUNIT')) {
-            $ids = AgidOrganizationalUnitContentTypeRoles::find()->select('agid_organizational_unit_content_type_id')->andWhere([
-                    'user_id' => \Yii::$app->getUser()->id])->distinct()->column();
-            $query->andWhere([self::tableName().'.agid_organizational_unit_content_type_id' => $ids,]);
-        }
+//        if (\Yii::$app->getUser()->can('REDACTOR_ORGANIZATIONALUNIT')) {
+//            $ids = AgidOrganizationalUnitContentTypeRoles::find()->select('agid_organizational_unit_content_type_id')->andWhere([
+//                    'user_id' => \Yii::$app->getUser()->id])->distinct()->column();
+//            $query->andWhere([self::tableName().'.agid_organizational_unit_content_type_id' => $ids,]);
+//        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

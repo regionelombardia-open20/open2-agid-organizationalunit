@@ -12,7 +12,7 @@ use yii\data\ActiveDataProvider;
 class AgidOrganizationalUnitSearch extends AgidOrganizationalUnit
 {
 
-	//private $container;
+    //private $container;
 
     public function __construct(array $config = [])
     {
@@ -23,24 +23,31 @@ class AgidOrganizationalUnitSearch extends AgidOrganizationalUnit
     public function rules()
     {
         return [
-            [['id', 'agid_organizational_unit_content_type_id', 'agid_organizational_unit_type_id', 'created_by', 'updated_by', 'deleted_by'], 'integer'],
-            [['name', 'short_description', 'skills', 'headquarters_name', 'address', 'public_hours', 'cap', 'telephone_reference', 'mail_reference', 'pec_reference', 'further_information', 'help_box', 'status', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
+            [['id', 'agid_organizational_unit_content_type_id', 'agid_organizational_unit_type_id', 'created_by', 'updated_by',
+                'deleted_by'], 'integer'],
+            [['name', 'short_description', 'skills', 'headquarters_name', 'address', 'public_hours', 'cap', 'telephone_reference',
+                'mail_reference', 'pec_reference', 'further_information', 'help_box', 'status', 'created_at', 'updated_at',
+                'deleted_at'], 'safe'],
             ['AgidOrganizationalUnitType', 'safe'],
         ];
     }
 
     public function scenarios()
     {
-		// bypass scenarios() implementation in the parent class
+        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
-    public function search($params)
+    public function search($params, $queryType = null, $limit = null, $onlyDrafts = false, $pageSize = NULL)
     {
         $query = AgidOrganizationalUnit::find();
-        if(\Yii::$app->getUser()->can('REDACTOR_ORGANIZATIONALUNIT')){
-            $ids = AgidOrganizationalUnitContentTypeRoles::find()->select('agid_organizational_unit_content_type_id')->andWhere(['user_id' =>\Yii::$app->getUser()->id ])->distinct()->column();
-            $query->andWhere([self::tableName() .'.agid_organizational_unit_content_type_id' => $ids,]);
+        if (\Yii::$app->user->can('ADMIN')) {
+            //to-do
+        } else if (\Yii::$app->getUser()->can('REDACTOR_ORGANIZATIONALUNIT')) {
+            $ids = AgidOrganizationalUnitContentTypeRoles::find()->select('agid_organizational_unit_content_type_id')->andWhere([
+                    'user_id' => \Yii::$app->getUser()->id])->distinct()->column();
+
+            $query->andWhere([self::tableName().'.agid_organizational_unit_content_type_id' => $ids,]);
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -142,7 +149,7 @@ class AgidOrganizationalUnitSearch extends AgidOrganizationalUnit
                     'asc' => ['agid_organizational_unit.relFiledsDynamic' => SORT_ASC],
                     'desc' => ['agid_organizational_unit.relFiledsDynamic' => SORT_DESC],
                 ],
-            ]]);
+        ]]);
 
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
@@ -152,39 +159,39 @@ class AgidOrganizationalUnitSearch extends AgidOrganizationalUnit
             'id' => $this->id,
             'agid_organizational_unit_content_type_id' => $this->agid_organizational_unit_content_type_id,
             'agid_organizational_unit_type_id' => $this->agid_organizational_unit_type_id,
-            AgidOrganizationalUnit::tableName() . '.created_at' => $this->created_at,
-            AgidOrganizationalUnit::tableName() . '.updated_at' => $this->updated_at,
-            AgidOrganizationalUnit::tableName() . '.deleted_at' => $this->deleted_at,
-            AgidOrganizationalUnit::tableName() . '.created_by' => $this->created_by,
-            AgidOrganizationalUnit::tableName() . '.updated_by' => $this->updated_by,
-            AgidOrganizationalUnit::tableName() . '.deleted_by' => $this->deleted_by,
+            AgidOrganizationalUnit::tableName().'.created_at' => $this->created_at,
+            AgidOrganizationalUnit::tableName().'.updated_at' => $this->updated_at,
+            AgidOrganizationalUnit::tableName().'.deleted_at' => $this->deleted_at,
+            AgidOrganizationalUnit::tableName().'.created_by' => $this->created_by,
+            AgidOrganizationalUnit::tableName().'.updated_by' => $this->updated_by,
+            AgidOrganizationalUnit::tableName().'.deleted_by' => $this->deleted_by,
         ]);
 
-        $query->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.name', $this->name])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.short_description', $this->short_description])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.skills', $this->skills])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.headquarters_name', $this->headquarters_name])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.address', $this->address])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.public_hours', $this->public_hours])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.cap', $this->cap])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.telephone_reference', $this->telephone_reference])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.mail_reference', $this->mail_reference])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.pec_reference', $this->pec_reference])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.further_information', $this->further_information])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.help_box', $this->help_box])
-            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName() . '.status', $this->status]);
+        $query->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.name', $this->name])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.short_description', $this->short_description])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.skills', $this->skills])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.headquarters_name', $this->headquarters_name])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.address', $this->address])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.public_hours', $this->public_hours])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.cap', $this->cap])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.telephone_reference', $this->telephone_reference])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.mail_reference', $this->mail_reference])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.pec_reference', $this->pec_reference])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.further_information', $this->further_information])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.help_box', $this->help_box])
+            ->andFilterWhere(['like', AgidOrganizationalUnit::tableName().'.status', $this->status]);
 
         // UPDATE FROM / TO 
         $class_name = end(explode("\\", $this::className()));
 
-        if( !empty($params[$class_name]['updated_from']) ){
+        if (!empty($params[$class_name]['updated_from'])) {
 
-            $query->andWhere(['>=', AgidOrganizationalUnit::tableName() . '.updated_at', $params[$class_name]['updated_from'] ]);
+            $query->andWhere(['>=', AgidOrganizationalUnit::tableName().'.updated_at', $params[$class_name]['updated_from']]);
         }
 
-        if( !empty($params[$class_name]['updated_to']) ){
+        if (!empty($params[$class_name]['updated_to'])) {
 
-            $query->andWhere(['<=', AgidOrganizationalUnit::tableName() . '.updated_at', $params[$class_name]['updated_to'] ]);
+            $query->andWhere(['<=', AgidOrganizationalUnit::tableName().'.updated_at', $params[$class_name]['updated_to']]);
         }
 
         return $dataProvider;

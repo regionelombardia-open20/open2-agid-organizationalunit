@@ -45,9 +45,9 @@ class AgidOrganizationalUnitContentTypeRoles extends \open20\agid\organizational
         return isset($hints[$attribute]) ? $hints[$attribute] : null;
     }
 
-    public static function getEditFields()
+    public function getEditFields()
     {
-        $labels = self::attributeLabels();
+        $labels = $this->attributeLabels();
 
         return [
             [
