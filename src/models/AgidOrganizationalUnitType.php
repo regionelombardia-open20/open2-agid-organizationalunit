@@ -42,9 +42,9 @@ class AgidOrganizationalUnitType extends \open20\agid\organizationalunit\models\
         return ArrayHelper::merge(parent::attributeLabels(),[]);
     }
 
-    public function getEditFields()
+    public static function getEditFields()
     {
-        $labels = $this->attributeLabels();
+        $labels = self::attributeLabels();
 
         return [
             [

@@ -98,9 +98,9 @@ class AgidOrganizationalUnit extends BaseAgidOrganizationalUnit
         return ArrayHelper::merge(parent::attributeLabels(), []);
     }
 
-    public function getEditFields()
+    public static function getEditFields()
     {
-        $labels = $this->attributeLabels();
+        $labels = self::attributeLabels();
 
         return [
             [
@@ -248,8 +248,8 @@ class AgidOrganizationalUnit extends BaseAgidOrganizationalUnit
     public function getSchema()
     {
         $publisher       = new \simialbi\yii2\schemaorg\models\Organization();
-        $publisher->name = $this->name;
-        \simialbi\yii2\schemaorg\helpers\JsonLDHelper::add($publisher);
+        $publisher->name = $this->nameSurname;
+        \simialbi\yii2\schemaorg\helpers\JsonLDHelper::add($author);
         return \simialbi\yii2\schemaorg\helpers\JsonLDHelper::render();
     }
 
